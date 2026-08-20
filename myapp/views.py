@@ -5,12 +5,20 @@ from django.http import JsonResponse
 from datetime import datetime
 from django.core import serializers
 import json
+from rest_framework.response import Response
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
+from rest_framework.generics import RetrieveUpdateAPIView, DestroyAPIView 
+from rest_framework import generics, viewsets
+from rest_framework.views import APIView
+from .serializers import MenuSerializer, BookingSerializer, UserCommentsSerializer, UserSerializer
+from django.contrib.auth.models import User
+from rest_framework.permissions import IsAuthenticated
 
 
 
+# functino based view FBV
 def home(request):
 	return render(request, 'index.html')
 
@@ -74,7 +82,8 @@ def bookings(request):
 			booking = Booking(
 				first_name=data['first_name'],
 				reservation_date=data['reservation_date'],
-				reservation_slot=data['reservation_slot']
+				reservation_slot=data['reservation_slot'],
+				occasion = data.get('occasion', '')
 				)
 			booking.save()
 		else:
@@ -96,3 +105,40 @@ def all_bookings(request):
 	bookings = Booking.objects.all()
 	booking_json = serializers.serialize('json', bookings)
 	return render(request, 'bookings.html', {'bookings': booking_json})
+
+
+
+# adding new views, due to addition of serializers (to convert Model data to JSON)
+class MenuListCreateView(generics.ListCreateAPIView):
+	queryset = Menu.objects.all()
+	serializer_class = MenuSerializer
+
+class SingleMenuItemView(generics.RetrieveUpdateAPIView, generics.DestroyAPIView):
+	queryset = Menu.objects.all()
+	serializer_class = MenuSerializer
+
+class BookingListCreateView(generics.ListCreateAPIView):
+	queryset = Booking.objects.all()
+	serializer_class = BookingSerializer
+
+class UserCommentListCreateView(generics.ListCreateAPIView):
+	queryset = UserComments.objects.all()
+	serializer_class = UserCommentsSerializer
+
+# different type of view - APIView:
+class BookingAPIView(APIView):
+	def get(self, request):
+		items = Booking.objects.all()
+		serializer = BookingSerializer(items, many = True)
+		return Response(serializer.data)
+	# def post()
+
+#the most automatic combo view version that does everything w viewsets:
+class BookingViewSet(viewsets.ModelViewSet):
+	queryset = Booking.objects.all()
+	serializer_class = BookingSerializer
+
+class UserViewSet(viewsets.ModelViewSet):
+	queryset = User.objects.all()
+	serializer_class = UserSerializer
+	permission_class = [IsAuthenticated]

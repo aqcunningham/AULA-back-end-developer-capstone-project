@@ -127,6 +127,7 @@ document.getElementById('button').addEventListener('click', function (e) {
       first_name: document.getElementById('first_name').value,
       reservation_date: document.getElementById('reservation_date').value,
       reservation_slot: document.getElementById('reservation_slot').value,
+      occasion: document.getElementById('occasion').value,
     }
 
     fetch("{% url 'bookings' %}", { 
