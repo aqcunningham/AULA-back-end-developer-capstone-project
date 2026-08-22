@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import Menu, Booking, UserComments
 from django.contrib.auth.models import User
+from djoser.serializers import TokenCreateSerializer
 
 class MenuSerializer(serializers.ModelSerializer):
 	class Meta:
@@ -17,7 +18,21 @@ class UserCommentsSerializer(serializers.ModelSerializer):
 		model = UserComments
 		fields = '__all__'
 
+# admin only:
 class UserSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = User
 		fields = ['username', 'email', 'groups']
+
+# for new staff:
+class StaffUserSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = User
+		fields = ['username', 'email', 'password']
+	def create(self, validated_data):
+		user = User.objects.create_user(**validated_data)
+		return user
+
+class CustomTokenCreateSerializer(TokenCreateSerializer):
+    username = serializers.CharField()
+    password = serializers.CharField(style={'input_type': 'password'})

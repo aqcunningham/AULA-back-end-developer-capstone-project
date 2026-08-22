@@ -22,6 +22,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-v&$csvaoac@i0*)snwv-@0zjfow(7deju%q=70&$w_8mf88^qu'
 
+
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -39,8 +41,15 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 	# rest framework is the first milesstone for the authentication
 	'rest_framework',
+	'rest_framework.authtoken',
+	'djoser',
 	'myapp'
 ]
+DJOSER={
+	"USER_ID_FIELD":"username",
+	"SERIALIZERS":{
+		"token_create": "myapp.serializers.CustomTokenCreateSerializer",
+    }}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -83,6 +92,8 @@ DATABASES = {
 		'PASSWORD': 'aula123',
 		'HOST': '127.0.0.1',
         'PORT': '3306',
+		# 600 sec = 10min
+		'CONN_MAX_AGE': 600,
         # 'OPTIONS': {
 		# 	'unix_socket': '/tmp/mysql.sock',
         # },
@@ -115,7 +126,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Los_Angeles'
 
 USE_I18N = True
 
@@ -139,5 +150,10 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
     ],
+	'DEFAULT_RENDERER_CLASSES':[
+		'rest_framework.renderers.JSONRenderer',
+		'rest_framework.renderers.BrowsableAPIRenderer',
+		# 'rest_framework_xml.renderers.XMLRenderer',
+    ]
 }
 

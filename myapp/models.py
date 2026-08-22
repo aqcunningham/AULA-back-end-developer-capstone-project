@@ -5,7 +5,7 @@ class UserComments(models.Model):
 	first_name = models.CharField(max_length = 200)
 	last_name = models.CharField(max_length = 200)
 	comment = models.CharField(max_length = 1000)
-    	# __str__ method is just about how the object displays itself when printed or shown in Django admin
+    	# __str__ is a dunder method is just about how the object displays itself when printed or shown in Django admin
 
 	def __str__(self): 
           return self.first_name
@@ -20,6 +20,8 @@ class Menu(models.Model):
     inventory = models.IntegerField(default=5)
     def __str__(self):     
         return self.item_name
+    def get_item(self):
+        return f'{self.item_name} : {str(self.price)}'
 
     
 # a table for Bookings, from the last lab

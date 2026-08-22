@@ -10,12 +10,16 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from rest_framework.generics import RetrieveUpdateAPIView, DestroyAPIView 
-from rest_framework import generics, viewsets
+from rest_framework import generics, viewsets, permissions
 from rest_framework.views import APIView
-from .serializers import MenuSerializer, BookingSerializer, UserCommentsSerializer, UserSerializer
+from .serializers import MenuSerializer, BookingSerializer, UserCommentsSerializer, UserSerializer, StaffUserSerializer
 from django.contrib.auth.models import User
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
+# added to the views that need auth, work for Class Based Views only CBV:
+# @api_view()
+# @permission_classes([IsAuthenticated])
 
 
 # functino based view FBV
@@ -96,6 +100,8 @@ def bookings(request):
 	booking_json = serializers.serialize('json', bookings)
 	return HttpResponse(booking_json, content_type='application/json') 
 
+@api_view()
+@permission_classes([IsAuthenticated])
 def all_bookings(request):
 	# to show the bookings just for today:
 	# date = request.GET.get('date', datetime.today().date())
@@ -112,18 +118,23 @@ def all_bookings(request):
 class MenuListCreateView(generics.ListCreateAPIView):
 	queryset = Menu.objects.all()
 	serializer_class = MenuSerializer
+	permission_classes = [IsAuthenticated]
 
 class SingleMenuItemView(generics.RetrieveUpdateAPIView, generics.DestroyAPIView):
 	queryset = Menu.objects.all()
 	serializer_class = MenuSerializer
+	permission_classes = [IsAuthenticated]
 
 class BookingListCreateView(generics.ListCreateAPIView):
 	queryset = Booking.objects.all()
 	serializer_class = BookingSerializer
+	permission_classes = [IsAuthenticated]
 
 class UserCommentListCreateView(generics.ListCreateAPIView):
 	queryset = UserComments.objects.all()
 	serializer_class = UserCommentsSerializer
+	permission_classes = [IsAuthenticated]
+
 
 # different type of view - APIView:
 class BookingAPIView(APIView):
@@ -132,13 +143,30 @@ class BookingAPIView(APIView):
 		serializer = BookingSerializer(items, many = True)
 		return Response(serializer.data)
 	# def post()
+	permission_classes = [IsAuthenticated]
 
 #the most automatic combo view version that does everything w viewsets:
 class BookingViewSet(viewsets.ModelViewSet):
 	queryset = Booking.objects.all()
 	serializer_class = BookingSerializer
+	permission_classes = [IsAdminUser]
 
+# admin only view: registration, edit, roles etc
 class UserViewSet(viewsets.ModelViewSet):
 	queryset = User.objects.all()
 	serializer_class = UserSerializer
-	permission_class = [IsAuthenticated]
+	permission_classes = [IsAdminUser]
+
+# any new staff registration:
+class StaffUserView(generics.CreateAPIView):
+	queryset = User.objects.all()
+	serializer_class = StaffUserSerializer
+	permission_classes = [permissions.AllowAny]
+
+
+# for testing the auth:
+@api_view()
+@permission_classes([IsAuthenticated])
+# @authentication_classes([TokenAuthentication])
+def msg(request):
+	return Response({"message":"This view is protected"})
