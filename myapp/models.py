@@ -20,8 +20,9 @@ class Menu(models.Model):
     inventory = models.IntegerField(default=5)
     def __str__(self):     
         return self.item_name
+    # a fucntion created to be tested in the Unit later:
     def get_item(self):
-        return f'{self.item_name} : {str(self.price)}'
+        return f'{self.item_name}: {str(self.price)}'
 
     
 # a table for Bookings, from the last lab

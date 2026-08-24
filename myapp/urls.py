@@ -22,7 +22,7 @@ urlpatterns = [
 # DRF generic / API views: manual path generation
 urlpatterns+=[
 	path('api/menu/', MenuListCreateView.as_view(), name='api-menu'),
-	path('api/menu/<int:pk>', SingleMenuItemView.as_view(), name='api-menu-item'),
+	path('api/menu/<int:pk>/', SingleMenuItemView.as_view(), name='api-menu-item'),
 	path('api/bookings/', BookingListCreateView.as_view(), name='api-bookings'),
 	path('api/usercomments/', UserCommentListCreateView.as_view(), name='api-usercomments'),
 	path('api/bookingsapiview/', BookingAPIView.as_view(), name='api-bookings-apiview'),
@@ -33,8 +33,8 @@ urlpatterns+=[
 # DRF ViewSets (auto-routed via router)
 # to enable the viewsets/ModelViewSet:
 router = DefaultRouter()
-router.register('api/bookingscombo', BookingViewSet)
-router.register('api/users', views.UserViewSet)
+router.register('api/bookingscombo/', BookingViewSet)
+router.register('api/users/', views.UserViewSet)
 
 urlpatterns +=router.urls
 
