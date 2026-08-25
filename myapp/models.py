@@ -23,7 +23,6 @@ class Menu(models.Model):
     # a fucntion created to be tested in the Unit later:
     def get_item(self):
         return f'{self.item_name}: {str(self.price)}'
-
     
 # a table for Bookings, from the last lab
 class Booking(models.Model):

@@ -9,7 +9,26 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <title>{% block title %}Aula{% endblock %}</title>
 </head>
-<body class="bg-light">
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">
+             <img src="/static/logo.jpeg" alt="Logo" width="60" height="60" class="d-inline-block align-text-top">
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+          <div class="navbar-nav">
+            <a class="nav-link active" aria-current="page" href="#">Home</a>
+            <a class="nav-link" href="#">Reservation</a>
+            <a class="nav-link" href="#">Menu</a>
+            <a class="nav-link" href="#">Reviews</a>
+            <a class="nav-link" href="#">About</a>
+          </div>
+        </div>
+      </div>
+    </nav>
+<body>
     <div class="container pt-4">
 		{% include '_header.html' %}
         <main>

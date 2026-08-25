@@ -22,6 +22,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 	path('', include('myapp.urls')),
     path('auth/', include('djoser.urls')),
-	# enables http://127.0.0.1:8000/auth/token/login:
+	# enables http://127.0.0.1:8000/auth/token/login and
+	# enables http://127.0.0.1:8000/auth/users/me/:
 	path('auth/', include('djoser.urls.authtoken')),
 ]

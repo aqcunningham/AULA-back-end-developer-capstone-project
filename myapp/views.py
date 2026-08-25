@@ -42,7 +42,7 @@ def form_view(request):
 			return JsonResponse({'message': 'success'})
 	return render(request, 'blog.html', {'form': form})
 
-def menu_view(request):
+def add_menu_view(request):
 	form = MenuForm()
 	if request.method == "POST":
 		form = MenuForm(request.POST)
@@ -55,7 +55,13 @@ def menu_view(request):
 			# )
 			form.save()
 			return JsonResponse({'message': 'success'})
-	return render(request, 'menu_items.html', {'form': form})
+	return render(request, 'add_menu_items.html', {'form': form})
+
+def menu_items_view(request):
+	menu = Menu.objects.all()
+	menu_json = serializers.serialize('json', menu)
+	return render(request, 'menu_items.html', {'menu': menu_json})
+
 
 def book(request):
 	form = BookingForm()
@@ -165,8 +171,8 @@ class StaffUserView(generics.CreateAPIView):
 
 
 # for testing the auth:
-@api_view()
-@permission_classes([IsAuthenticated])
-# @authentication_classes([TokenAuthentication])
-def msg(request):
-	return Response({"message":"This view is protected"})
+# @api_view()
+# @permission_classes([IsAuthenticated])
+# # @authentication_classes([TokenAuthentication])
+# def msg(request):
+# 	return Response({"message":"This view is protected"})
