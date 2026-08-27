@@ -1,7 +1,7 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from . import views
-from .views import reservation_view
+from .views import reservation_page_view, reservation_api
 # MenuListCreateView, BookingListCreateView, Reviews, BookingAPIView, BookingViewSet,SingleMenuItemView, UserViewSet, StaffUserView, add_menu_view, menu_items_view
 from rest_framework.authtoken.views import obtain_auth_token
 
@@ -9,7 +9,8 @@ from rest_framework.authtoken.views import obtain_auth_token
 # cant use automatic router method
 urlpatterns = [
 	path('', views.home, name='home'),
-	path('makereservation/', views.reservation_view, name="reservation"),
+	path('reservation/', views.reservation_page_view, name='reservation_page'),
+	path('api/reservation/', views.reservation_api, name='reservation_api'),
 	path('menu/', views.menu_items_view, name='menu'),
 	path('reviews/', views.form_view, name='reviews'),
 
@@ -37,15 +38,15 @@ urlpatterns = [
 
 # # DRF ViewSets (auto-routed via router)
 # # to enable the viewsets/ModelViewSet:
-# router = DefaultRouter()
+router = DefaultRouter()
 # router.register('api/bookingscombo', BookingViewSet)
-# router.register('api/users', views.UserViewSet)
+router.register('api/users', views.UserViewSet)
 
-# urlpatterns +=router.urls
+urlpatterns +=router.urls
 
 # # add the login/logout options
-# urlpatterns +=[
-# 	path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-# 	path('api-token-auth/', obtain_auth_token),
-# ]
+urlpatterns +=[
+	path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+	path('api-token-auth/', obtain_auth_token),
+]
 

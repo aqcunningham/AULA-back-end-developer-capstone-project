@@ -26,15 +26,38 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser
 def home(request):
 	return render(request, 'home.html')
 
-def reservation_view(request):
-	form = ReservationForm()
-	if request.method == 'POST':
-		form = ReservationForm(request.POST)
-		if form.is_valid():
-			form.save()
-			return JsonResponse({'message': 'success'})
-	return render(request, 'reservation.html', {'form': form})
+# for customer to make a reservation
+def reservation_page_view(request):
+	return render(request, 'reservation.html')
 
+# api logic for reservation page, to get the bookings for a given date, and to make a new booking
+# not visible to the user, but used by the reservation.html page via fetch() in JS
+@csrf_exempt	
+def reservation_api(request):
+	if request.method == 'POST':
+		data = json.load(request)
+		exist = Reservation.objects.filter(
+			reservation_date=data['reservation_date']
+			).filter(
+				reservation_slot= data['reservation_slot']
+				).exists()
+		if exist == False:
+			booking = Reservation(
+				first_name=data['first_name'],
+				reservation_date=data['reservation_date'],
+				reservation_slot=data['reservation_slot'],
+				occasion = data.get('occasion', '')
+				)
+			booking.save()
+		else:
+			return HttpResponse("{'error': 1}", content_type='application/json')
+				
+	date = request.GET.get('date', datetime.today().date())
+	if date == '':
+		date = datetime.today().date()
+	bookings = Reservation.objects.all().filter(reservation_date=date)
+	booking_json = serializers.serialize('json', bookings)
+	return HttpResponse(booking_json, content_type='application/json')
 
 def form_view(request):
 	form = Reviews()
@@ -74,15 +97,7 @@ def menu_items_view(request):
 
 
 
-# @login_required
-@csrf_exempt	
-def bookings(request):
-	# this version from prev lab:
-	# show map and  a header All Reservations
-	# date = request.GET.get('date', datetime.today().date())
-	# bookings = Booking.objects.all()
-	# booking_json = serializers.serialize('json', bookings)
-	# return render(request, 'bookings.html', {'bookings': booking_json})
+
 	if request.method == 'POST':
 		data = json.load(request)
 		exist = Reservation.objects.filter(

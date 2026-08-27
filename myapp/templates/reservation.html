@@ -9,33 +9,28 @@
     <form id="reservation_form">
       {% csrf_token %}
       <div class="mb-3">
-        <label for="first_name" classs="form-label">Name</label>
-        <input type="text" class="form-control" placeholder="Your Name" maxlength="200" required="" id="first_name">
+        <label for="first_name" class="form-label" >Name</label>
+        <input type="text" class="form-control" required placeholder="Your Name" maxlength="200" id="first_name">
       </div>
       <div class="mb-3">
-        <label for="reservation_date" classs="form-label" required>When</label>
-        <input type="date" classs="form-control" required id="reservation_date">
+        <label for="reservation_date" class="form-label">When</label>
+        <input type="date" class="form-control" required id="reservation_date">
       </div>
       <div class="mb-3">
-        <label for="reservation_slot" classs="form-label" required>Time</label>
-        <select classs="form-select" id="reservation_slot" name="reservation_slot">
+        <label for="reservation_slot" class="form-label">Time</label>
+        <select class="form-select" id="reservation_slot" name="reservation_slot">
           <option value="0" disabled>Select time</option>
         </select>
       </div>
       <div class="mb-3">
-        <label for="number_of_guests" classs="form-label">Number of Guests</label>
-        <input type="number" classs="form-control" value="2" min="1" max="50" id="number_of_guests">
+        <label for="number_of_guests" class="form-label">Number of Guests</label>
+        <input type="number" class="form-control" value="2" min="1" max="50" id="number_of_guests">
       </div>
       <div class="mb-4">
-        <label for="occasion" classs="form-label">Occasion</label>
-        <!-- <textarea class="form-control" id="occasion" placeholder="What are we celebrating?"></textarea> -->
-        <select classs="form-select" id="occasion" name="occasion">
-          <option value="Birthday">Birthday</option>
-          <option value="Anniversary">Anniversary</option>
-          <option value="Other">Other</option>
-        </select>
+        <label for="occasion" class="form-label">Occasion</label>
+        <textarea class="form-control" id="occasion" placeholder="What are we celebrating?"></textarea>
       </div>
-      <button type="button" id="button">Reserve</button>
+      <button type="submit" id="button" class="btn btn-primary">Reserve</button>
     </form>
   </div>
 
@@ -48,13 +43,11 @@
 
 
 {% endblock %}
-
 {% block scripts %}
-<!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script -->
 <script>
 // console.log("Hello");
 const date = new Date()
-document.getElementById('reservation_date').value = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate().toString().padStart(2, "0")}`
+document.getElementById('reservation_date').value = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, "0")}-${date.getDate().toString().padStart(2, "0")}`
 console.log(document.getElementById('reservation_date').value)
 getBookings()
 
@@ -69,7 +62,7 @@ function getBookings() {
     const date = document.getElementById('reservation_date').value
     document.getElementById('today').innerHTML = date
     
-    fetch("{% url 'reservation' %}" + '?date=' + date)
+    fetch("{% url 'reservation_api' %}" + '?date=' + date)
       .then(r => r.json())
       .then(data => {
         reserved_slots = []
@@ -94,7 +87,7 @@ function getBookings() {
 		
 		document.getElementById('reservation_slot').innerHTML = slot_options
         if(bookings==''){
-          bookings = "No bookings"
+          bookings = "You have no reservations for this date."
         }
         document.getElementById('reservations').innerHTML = bookings
       })
@@ -107,8 +100,9 @@ function formatTime(time) {
     return label
 }
 
-
-document.getElementById('button').addEventListener('click', function (e) {
+// replaced button click event with form submit event to prevent page reload; so the required fields are not cleared out and the user can see the updated bookings for the selected date
+document.getElementById('reservation_form').addEventListener('submit', function (e) {
+    e.preventDefault()
     const formdata = {
       first_name: document.getElementById('first_name').value,
       reservation_date: document.getElementById('reservation_date').value,
@@ -116,7 +110,7 @@ document.getElementById('button').addEventListener('click', function (e) {
       occasion: document.getElementById('occasion').value,
     }
 
-    fetch("{% url 'reservation' %}", { 
+    fetch("{% url 'reservation_api' %}", { 
       method: 'post', 
       headers: {
         'Content-Type': 'application/json',
