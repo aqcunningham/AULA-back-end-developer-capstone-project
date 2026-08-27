@@ -1,6 +1,6 @@
 from django.shortcuts import render
-from .forms import CommentForm, MenuForm, BookingForm
-from .models import UserComments, Menu, Booking
+from .forms import Reviews, MenuForm, ReservationForm
+from .models import Reviews, Menu, Reservation
 from django.http import JsonResponse
 from datetime import datetime
 from django.core import serializers
@@ -12,7 +12,7 @@ from django.http import HttpResponse
 from rest_framework.generics import RetrieveUpdateAPIView, DestroyAPIView 
 from rest_framework import generics, viewsets, permissions
 from rest_framework.views import APIView
-from .serializers import MenuSerializer, BookingSerializer, UserCommentsSerializer, UserSerializer, StaffUserSerializer
+from .serializers import MenuSerializer, ReservationSerializer, UserCommentsSerializer, UserSerializer, StaffUserSerializer
 from django.contrib.auth.models import User
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
@@ -24,12 +24,22 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
 # functino based view FBV
 def home(request):
-	return render(request, 'index.html')
+	return render(request, 'home.html')
+
+def reservation_view(request):
+	form = ReservationForm()
+	if request.method == 'POST':
+		form = ReservationForm(request.POST)
+		if form.is_valid():
+			form.save()
+			return JsonResponse({'message': 'success'})
+	return render(request, 'reservation.html', {'form': form})
+
 
 def form_view(request):
-	form = CommentForm()
+	form = Reviews()
 	if request.method == "POST":
-		form = CommentForm(request.POST)
+		form = Reviews(request.POST)
 		if form.is_valid():
 			# can skip?
 			# cldt = form.cleaned_data
@@ -40,7 +50,7 @@ def form_view(request):
 			# )
 			form.save()
 			return JsonResponse({'message': 'success'})
-	return render(request, 'blog.html', {'form': form})
+	return render(request, 'reviews.html', {'form': form})
 
 def add_menu_view(request):
 	form = MenuForm()
@@ -63,14 +73,6 @@ def menu_items_view(request):
 	return render(request, 'menu_items.html', {'menu': menu_json})
 
 
-def book(request):
-	form = BookingForm()
-	if request.method == 'POST':
-		form = BookingForm(request.POST)
-		if form.is_valid():
-			form.save()
-			return JsonResponse({'message': 'success'})
-	return render(request, 'book.html', {'form': form})
 
 # @login_required
 @csrf_exempt	
@@ -83,13 +85,13 @@ def bookings(request):
 	# return render(request, 'bookings.html', {'bookings': booking_json})
 	if request.method == 'POST':
 		data = json.load(request)
-		exist = Booking.objects.filter(
+		exist = Reservation.objects.filter(
 			reservation_date=data['reservation_date']
 			).filter(
 				reservation_slot= data['reservation_slot']
 				).exists()
 		if exist == False:
-			booking = Booking(
+			booking = Reservation(
 				first_name=data['first_name'],
 				reservation_date=data['reservation_date'],
 				reservation_slot=data['reservation_slot'],
@@ -102,7 +104,7 @@ def bookings(request):
 	date = request.GET.get('date', datetime.today().date())
 	if date == '':
 		date = datetime.today().date()
-	bookings = Booking.objects.all().filter(reservation_date=date)
+	bookings = Reservation.objects.all().filter(reservation_date=date)
 	booking_json = serializers.serialize('json', bookings)
 	return HttpResponse(booking_json, content_type='application/json') 
 
@@ -113,8 +115,8 @@ def all_bookings(request):
 	# date = request.GET.get('date', datetime.today().date())
 	# if date == '':
 	# 	date = datetime.today().date()
-	# bookings = Booking.objects.all().filter(reservation_date=date)
-	bookings = Booking.objects.all()
+	# bookings = Reservation.objects.all().filter(reservation_date=date)
+	bookings = Reservation.objects.all()
 	booking_json = serializers.serialize('json', bookings)
 	return render(request, 'bookings.html', {'bookings': booking_json})
 
@@ -131,13 +133,13 @@ class SingleMenuItemView(generics.RetrieveUpdateAPIView, generics.DestroyAPIView
 	serializer_class = MenuSerializer
 	permission_classes = [IsAuthenticated]
 
-class BookingListCreateView(generics.ListCreateAPIView):
-	queryset = Booking.objects.all()
-	serializer_class = BookingSerializer
+class ReservationListCreateView(generics.ListCreateAPIView):
+	queryset = Reservation.objects.all()
+	serializer_class = ReservationSerializer
 	permission_classes = [IsAuthenticated]
 
-class UserCommentListCreateView(generics.ListCreateAPIView):
-	queryset = UserComments.objects.all()
+class Reviews(generics.ListCreateAPIView):
+	queryset = Reviews.objects.all()
 	serializer_class = UserCommentsSerializer
 	permission_classes = [IsAuthenticated]
 
@@ -145,16 +147,16 @@ class UserCommentListCreateView(generics.ListCreateAPIView):
 # different type of view - APIView:
 class BookingAPIView(APIView):
 	def get(self, request):
-		items = Booking.objects.all()
-		serializer = BookingSerializer(items, many = True)
+		items = Reservation.objects.all()
+		serializer = ReservationSerializer(items, many = True)
 		return Response(serializer.data)
 	# def post()
 	permission_classes = [IsAuthenticated]
 
 #the most automatic combo view version that does everything w viewsets:
-class BookingViewSet(viewsets.ModelViewSet):
-	queryset = Booking.objects.all()
-	serializer_class = BookingSerializer
+class ReservationViewSet(viewsets.ModelViewSet):
+	queryset = Reservation.objects.all()
+	serializer_class = ReservationSerializer
 	permission_classes = [IsAdminUser]
 
 # admin only view: registration, edit, roles etc

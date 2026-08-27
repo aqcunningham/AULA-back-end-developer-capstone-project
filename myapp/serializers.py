@@ -1,21 +1,24 @@
 from rest_framework import serializers
-from .models import Menu, Booking, UserComments
+from .models import Menu, Reservation, Reviews
 from django.contrib.auth.models import User
 from djoser.serializers import TokenCreateSerializer
+
+class ReservationSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = Reservation
+		fields = '__all__'
+
+
 
 class MenuSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Menu
 		fields = '__all__'
 
-class BookingSerializer(serializers.ModelSerializer):
-	class Meta:
-		model = Booking
-		fields = '__all__'
 
 class UserCommentsSerializer(serializers.ModelSerializer):
 	class Meta:
-		model = UserComments
+		model = Reviews
 		fields = '__all__'
 
 # admin only:

@@ -1,70 +1,56 @@
 {% extends 'base.html' %}
 {% load static %}
+{% block title %}Reservation{% endblock %}
 
 {% block content %}
-<section>
-  <article>
-    <h1> Make Reservation </h1>
-
-    <!--Begin row-->
-    <div class="row">
-      <!--Begin col-->
-      <div class="column">
-        <form id="form">
-          {% csrf_token %}
-		  <!-- the form.as_p is limited: generates all the HTML fields automatically from BookingForm -->
-          <!-- {{form.as_p}} -->
-		<p>
-			<label for="first_name">Name:</label>
-			<input type="text" placeholder="Your Name" maxlength="200" required="" id="first_name">
-		</p>
-		<p>
-			<label for="reservation_date" required="">When: </label>
-			<input type="date" id="reservation_date">
-		</p>
-		<p>
-            <label for="reservation_slot" required="">Time: </label>
-          	<select id="reservation_slot" name="reservation_slot">
-        	<option value="0" disabled>Select time</option>
-            </select>
-        </p>
-		<p>
-			<label for="number_of_guests" required="">Guests:</label>
-			<input type="number" value="2" min="1" max="50" id="number_of_guests">
-		</p>
-		<p>
-			<label for="occasion">Occasion: </label>
-			<!-- <input type="text" placeholder="What are we celebrating?" max_length="200"> -->
-			<textarea name="" id="occasion" placeholder="What are we celebrating?"></textarea>
-		</p>
-		 <!-- input submit was used previously to automtialcally submit all fields-->
-		<!-- <input type="submit" id="button"> -->
-		 <!-- now, we use: -->
-		<button type="button" id="button">Reserve</button>
-
-        </form>
+<div class="row justify-content-center g-5">
+  <div class="col-md-6">
+    <h1 class="mb-4">Make Reservation</h1>
+    <form id="reservation_form">
+      {% csrf_token %}
+      <div class="mb-3">
+        <label for="first_name" classs="form-label">Name</label>
+        <input type="text" class="form-control" placeholder="Your Name" maxlength="200" required="" id="first_name">
       </div>
-      <!--End col-->
+      <div class="mb-3">
+        <label for="reservation_date" classs="form-label" required>When</label>
+        <input type="date" classs="form-control" required id="reservation_date">
+      </div>
+      <div class="mb-3">
+        <label for="reservation_slot" classs="form-label" required>Time</label>
+        <select classs="form-select" id="reservation_slot" name="reservation_slot">
+          <option value="0" disabled>Select time</option>
+        </select>
+      </div>
+      <div class="mb-3">
+        <label for="number_of_guests" classs="form-label">Number of Guests</label>
+        <input type="number" classs="form-control" value="2" min="1" max="50" id="number_of_guests">
+      </div>
+      <div class="mb-4">
+        <label for="occasion" classs="form-label">Occasion</label>
+        <!-- <textarea class="form-control" id="occasion" placeholder="What are we celebrating?"></textarea> -->
+        <select classs="form-select" id="occasion" name="occasion">
+          <option value="Birthday">Birthday</option>
+          <option value="Anniversary">Anniversary</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+      <button type="button" id="button">Reserve</button>
+    </form>
+  </div>
 
-      <!--Begin col-->
-    <div class="column">
-        <div class="videowrap">
-			<h2>Bookings For <span id="today"></span></h2>
-        		<!-- <div id="bookings"> -->
-				<!-- <img src="{% static 'map.png' %}" alt="Restaurant location map" style="width: 800px; height: auto;"> -->
-  			    <!-- </div> -->
-				 <div id="bookings"></div>
-      	</div>
-      <!--End col-->
-    </div>
-    <!--End row-->
+
+  <div class="col-md-5">
+    <h2 class="mb-3">Bookings For <span id="today"></span></h2>
+    <div id="reservations" class="text-muted"></div>
+  </div>
+</div>
 
 
+{% endblock %}
 
-
-  </article>
-</section>
-
+{% block scripts %}
+<!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script -->
 <script>
 // console.log("Hello");
 const date = new Date()
@@ -83,7 +69,7 @@ function getBookings() {
     const date = document.getElementById('reservation_date').value
     document.getElementById('today').innerHTML = date
     
-    fetch("{% url 'bookings' %}" + '?date=' + date)
+    fetch("{% url 'reservation' %}" + '?date=' + date)
       .then(r => r.json())
       .then(data => {
         reserved_slots = []
@@ -110,7 +96,7 @@ function getBookings() {
         if(bookings==''){
           bookings = "No bookings"
         }
-        document.getElementById('bookings').innerHTML = bookings
+        document.getElementById('reservations').innerHTML = bookings
       })
   }		
 	
@@ -130,7 +116,7 @@ document.getElementById('button').addEventListener('click', function (e) {
       occasion: document.getElementById('occasion').value,
     }
 
-    fetch("{% url 'bookings' %}", { 
+    fetch("{% url 'reservation' %}", { 
       method: 'post', 
       headers: {
         'Content-Type': 'application/json',
