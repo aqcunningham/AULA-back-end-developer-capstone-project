@@ -12,6 +12,13 @@
 .ig:hover{
 	  color: #FFB09580;
 }
+
+.btn-primary {
+  --bs-btn-bg: #711C00 !important;
+  --bs-btn-border-color: #711C00;
+  --bs-btn-hover-bg: #FFB09580;
+  --bs-btn-hover-border-color: #FFB09580;
+}
 nav.bg-body-tertiary {
   background-color: white !important;
 
@@ -124,4 +131,39 @@ nav.bg-body-tertiary {
 	width: 2rem;
 	height: 2rem;
   }
+}
+
+.form-label {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 500;
+  color: #333;
+}
+
+.form-control, .form-select {
+  font-family: 'Poppins', sans-serif;
+  border-radius: 6px;
+  padding: 0.6rem 0.9rem;
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: #711C00;
+  box-shadow: 0 0 0 0.2rem rgba(113, 28, 0, 0.15);
+}
+h1, h2 {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  color: #711C00;
+}
+#reservations {
+  padding: 1rem;
+  background-color: #f9f5f2;
+  border-radius: 8px;
+}
+
+.copyright {
+  color: #711C00;
+  font-size: 1rem;
+  /* text-align: center; */
+  /* margin-top: ; */
+  font-family: 'Poppins', sans-serif;
 }

@@ -3,7 +3,13 @@
 {% block title %}Reservation{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center g-5">
+<style>
+  .reservation-wrapper {
+    min-height: calc(100vh - 100px - 60px);
+    padding-top: 2rem;
+  }
+</style>
+<div class="row justify-content-center g-5 reservation-wrapper">
   <div class="col-md-6">
     <h1 class="mb-4">Make Reservation</h1>
     <form id="reservation_form">
