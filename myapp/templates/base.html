@@ -10,51 +10,26 @@
     <!-- <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Poppins:wght@400;500&display=swap" rel="stylesheet"> -->
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Autour+One&family=Julius+Sans+One&family=LINE+Seed+JP&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Autour+One&family=Ephesis&family=Julius+Sans+One&family=LINE+Seed+JP&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/static/css/style.css">
     <title>{% block title %}Aula{% endblock %}</title>
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg bg-body-tertiary">
-      <div class="container-fluid">
-        <a class="navbar-brand" href="{% url 'home' %}">
-             <img src=  "{% static 'logo.jpeg' %}" alt="Logo" width="80" height="80" class="d-inline-block align-text-top">
-        </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-  <svg class="hamburger-icon" viewBox="0 0 24 24" width="28" height="28">
-    <line x1="3" y1="6" x2="21" y2="6" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
-    <line x1="3" y1="12" x2="21" y2="12" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
-    <line x1="3" y1="18" x2="21" y2="18" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
-  </svg>
-</button>
-        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-          <div class="navbar-nav">
-            <a class="nav-link" aria-current="page" href="{% url 'home' %}">Home</a>
-            <a class="nav-link" href="{% url 'reservation_page' %}">Reservation</a>
-            <a class="nav-link" href="{% url 'menu' %}">Menu</a>
-            <a class="nav-link" href="{% url 'reviews' %}">Reviews</a>
-            <a class="nav-link" href="#">About</a>
-            <a class="nav-link" href="https://www.instagram.com/aula_ast"> <svg class="ig" viewBox="0 0 32 32" fill="currentColor">
-            <path d="M22.3,8.4c-0.8,0-1.4,0.6-1.4,1.4c0,0.8,0.6,1.4,1.4,1.4c0.8,0,1.4-0.6,1.4-1.4C23.7,9,23.1,8.4,22.3,8.4z"/>
-            <path d="M16,10.2c-3.3,0-5.9,2.7-5.9,5.9s2.7,5.9,5.9,5.9s5.9-2.7,5.9-5.9S19.3,10.2,16,10.2z M16,19.9c-2.1,0-3.8-1.7-3.8-3.8c0-2.1,1.7-3.8,3.8-3.8c2.1,0,3.8,1.7,3.8,3.8C19.8,18.2,18.1,19.9,16,19.9z"/>
-            <path d="M20.8,4h-9.5C7.2,4,4,7.2,4,11.2v9.5c0,4,3.2,7.2,7.2,7.2h9.5c4,0,7.2-3.2,7.2-7.2v-9.5C28,7.2,24.8,4,20.8,4z M25.7,20.8c0,2.7-2.2,5-5,5h-9.5c-2.7,0-5-2.2-5-5v-9.5c0-2.7,2.2-5,5-5h9.5c2.7,0,5,2.2,5,5V20.8z"/>
-                </svg></a>          
-          </div>
-        </div>
-      </div>
-    </nav>
-    {% block full_width_content %}{% endblock %}
-    <div class="container">
-        <main>
-            {% block content %}
-            {% endblock %}
-        </main>
-            {% include '_footer.html' %} 
-
-    </div>
-    {% block scripts %}
-    {% endblock %}
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  {% include '_header.html' %} 
+  {% block full_width_content %}{% endblock %}
+  {% block main_section %}
+  <div class="container">
+    <main class="main-wrapper">
+      {% block content %} {% endblock %}
+    </main>
+    {% include '_footer.html' %} 
+  </div>
+  {% endblock %}
+  {% block scripts %}{% endblock %}
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
