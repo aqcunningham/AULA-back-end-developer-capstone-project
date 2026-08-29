@@ -24,6 +24,13 @@
 	  color: #FFB09580;
 }
 
+.staff-login {
+  /* padding-top: 1rem; */
+  font-size: 1rem !important;
+  font-weight: 300;
+  color: #f94e16 !important;
+}
+
 .btn-primary {
   --bs-btn-bg: #711C00 !important;
   --bs-btn-border-color: #711C00;
@@ -55,7 +62,7 @@ nav.bg-body-tertiary {
 	/* font-family: 'Poppins', sans-serif;
     font-size: 3rem;
     font-weight: 500; */
-    gap: 3rem;   /* spacing between nav links */
+    gap: 1rem;   /* spacing between nav links */
   } 
 
   .nav-link {
@@ -99,6 +106,9 @@ nav.bg-body-tertiary {
 }
 /* for small screens */
 @media (max-width: 991.98px) {
+  .nav-link {
+    font-size: 1rem;
+  }
   .navbar-collapse {
     position: absolute;
     top: 100%;
@@ -106,11 +116,13 @@ nav.bg-body-tertiary {
     width: 100%;
     z-index: 1050;
     padding: 1rem;
+    
   }
   .navbar-nav a {
   --bs-nav-link-color: #fdfcfc;
   --bs-nav-link-hover-color: #FFB09580;
   --bs-nav-link-disabled-color: rgba(255, 201, 201, 0.3);
+  --bs-nav-link-padding-y: 0;
   }
   .navbar-nav { 
     gap: 1rem;

@@ -9,6 +9,7 @@ mysqlclient = "*"
 djangorestframework = "*"
 django = "*"
 djoser = "*"
+pillow = "*"
 
 [dev-packages]
 

@@ -1,0 +1,145 @@
+{% extends 'base.html' %}
+{% block title %}Staff — Reservations{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Reservations</h1>
+<table class="table table-hover align-middle">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Date</th>
+      <th>Time</th>
+      <th>Guests</th>
+      <th>Occasion</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody id="reservations-table"></tbody>
+</table>
+
+<!-- Edit Modal -->
+<div class="modal fade" id="editModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Edit Reservation</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="edit-id">
+        <div class="mb-3">
+          <label class="form-label">Name</label>
+          <input type="text" class="form-control" id="edit-name">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Date</label>
+          <input type="date" class="form-control" id="edit-date">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Time slot (24hr, e.g. 19 for 7PM)</label>
+          <input type="number" class="form-control" id="edit-slot" min="15" max="21">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Guests</label>
+          <input type="number" class="form-control" id="edit-guests">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Occasion</label>
+          <textarea class="form-control" id="edit-occasion"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" id="save-edit-btn">Save Changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function formatTime(time) {
+  const ampm = time < 12 ? 'AM' : 'PM'
+  const t = time < 12 ? time : time > 12 ? time - 12 : time
+  return `${t} ${ampm}`
+}
+
+function loadReservations() {
+  fetch("/make_reservation/drf/")
+    .then(r => r.json())
+    .then(data => {
+      let rows = ''
+      data.forEach(res => {
+        rows += `
+          <tr>
+            <td class="edit-row" role="button" data-res='${JSON.stringify(res)}'>${res.first_name}</td>
+            <td class="edit-row" role="button" data-res='${JSON.stringify(res)}'>${res.reservation_date}</td>
+            <td class="edit-row" role="button" data-res='${JSON.stringify(res)}'>${formatTime(res.reservation_slot)}</td>
+            <td class="edit-row" role="button" data-res='${JSON.stringify(res)}'>${res.number_of_guests}</td>
+            <td class="edit-row" role="button" data-res='${JSON.stringify(res)}'>${res.occasion || '—'}</td>
+            <td><button class="btn btn-sm btn-outline-danger delete-btn" data-id="${res.id}">Delete</button></td>
+          </tr>`
+      })
+      document.getElementById('reservations-table').innerHTML = rows
+      attachRowHandlers()
+    })
+}
+
+function attachRowHandlers() {
+  document.querySelectorAll('.edit-row').forEach(cell => {
+    cell.addEventListener('click', function () {
+      const res = JSON.parse(this.dataset.res)
+      document.getElementById('edit-id').value = res.id
+      document.getElementById('edit-name').value = res.first_name
+      document.getElementById('edit-date').value = res.reservation_date
+      document.getElementById('edit-slot').value = res.reservation_slot
+      document.getElementById('edit-guests').value = res.number_of_guests
+      document.getElementById('edit-occasion').value = res.occasion || ''
+      new bootstrap.Modal(document.getElementById('editModal')).show()
+    })
+  })
+
+  document.querySelectorAll('.delete-btn').forEach(btn => {
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation()
+      fetch(`/make_reservation/staff/${this.dataset.id}/`, {
+        method: 'DELETE',
+        headers: { 'X-CSRFToken': document.cookie.split('csrftoken=')[1]?.split(';')[0] }
+      }).then(r => {
+        if (r.status === 403) {
+          alert("You don't have permission to delete reservations.")
+        } else {
+          loadReservations()
+        }
+      })
+    })
+  })
+}
+
+document.getElementById('save-edit-btn').addEventListener('click', function () {
+  const id = document.getElementById('edit-id').value
+  const updated = {
+    first_name: document.getElementById('edit-name').value,
+    reservation_date: document.getElementById('edit-date').value,
+    reservation_slot: document.getElementById('edit-slot').value,
+    number_of_guests: document.getElementById('edit-guests').value,
+    occasion: document.getElementById('edit-occasion').value,
+  }
+
+  fetch(`/make_reservation/drf/${id}/`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRFToken': document.cookie.split('csrftoken=')[1]?.split(';')[0]
+    },
+    body: JSON.stringify(updated)
+  }).then(() => {
+    bootstrap.Modal.getInstance(document.getElementById('editModal')).hide()
+    loadReservations()
+  })
+})
+
+loadReservations()
+</script>
+{% endblock %}

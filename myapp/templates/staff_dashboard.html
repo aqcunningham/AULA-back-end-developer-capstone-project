@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %}Staff Dashboard{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1>Staff Dashboard</h1>
+
+</div>
+
+<div class="row g-4">
+  <div class="col-md-4">
+    <div class="card h-100">
+      <div class="card-body">
+        <h5 class="card-title">Reservations</h5>
+        <p class="card-text">Manage reservations.</p>
+        <a href="{% url 'reservation_staff' %}" class="btn btn-primary">Open</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="card h-100">
+      <div class="card-body">
+        <h5 class="card-title">Menu</h5>
+        <p class="card-text">Manage menu items and pricing.</p>
+        <a href="#" class="btn btn-primary disabled">Coming soon</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
