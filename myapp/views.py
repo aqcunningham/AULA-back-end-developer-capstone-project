@@ -26,6 +26,9 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser, BasePermiss
 def home(request):
 	return render(request, 'home.html')
 
+def about(request):
+	return render(request, 'about.html')
+
 @login_required
 def staff_dashboard(request):
     return render(request, 'staff_dashboard.html')
@@ -42,21 +45,27 @@ def reservation_api(request):
 		data = json.load(request)
 		exists = Reservation.objects.filter(
 			reservation_date=data['reservation_date'],
-			reservation_slot= data['reservation_slot']
-			).exists()
-		if exists:
-			return JsonResponse({'error': 'Reservation already exists.'}, status=400)
-
-		Reservation.objects.create(
-				first_name=data['first_name'],
-				reservation_date=data['reservation_date'],
-				reservation_slot=data['reservation_slot'],
-				occasion = data.get('occasion', '')
-				)
+			).filter(
+				reservation_slot=data['reservation_slot']
+				).exists()
+		if exists == False:
+			booking = Reservation(
+                first_name=data['first_name'],
+                reservation_date=data['reservation_date'],
+                reservation_slot=data['reservation_slot'],
+                occasion=data.get('occasion', '')
+            )
+			booking.save()
+		else:
+			return JsonResponse("{'error': 1}", content_type='application/json', status=400)
+			# return JsonResponse({'message': 'Booking already exists for this date and time slot.'}, status=400)
+		# return HttpResponse(booking_json, content_type='application/json')
+	date = request.GET.get('date', datetime.today().date())
+	if date == '':
 		date = datetime.today().date()
-		bookings = Reservation.objects.all().filter(reservation_date=date)
-		booking_json = serializers.serialize('json', bookings)
-		return HttpResponse(booking_json, content_type='application/json')
+	bookings = Reservation.objects.all().filter(reservation_date=date)
+	booking_json = serializers.serialize('json', bookings)
+	return HttpResponse(booking_json, content_type='application/json')
 
 # grants access to Reservation API views if the user is in the 'managers' or 'waiters' group or is a superuser
 class ReservationViewSet(viewsets.ModelViewSet):
@@ -139,10 +148,16 @@ class SingleMenuItemView(generics.RetrieveUpdateAPIView, generics.DestroyAPIView
 	serializer_class = MenuSerializer
 	permission_classes = [IsAuthenticated]
 
-class Reviews(generics.ListCreateAPIView):
-	queryset = Reviews.objects.all()
-	serializer_class = ReviewsSerializer
-	permission_classes = [IsAuthenticated]
+# class Reviews(generics.ListCreateAPIView):
+# 	queryset = Reviews.objects.all()
+# 	serializer_class = ReviewsSerializer
+# 	permission_classes = [IsAuthenticated]
+
+def ReviewsView(request):
+	reviews = Reviews.objects.all()
+	reviews_json = serializers.serialize('json', reviews)
+	return render(request, 'reviews.html', {'reviews': reviews_json})  
+
 
 
 
@@ -157,3 +172,6 @@ class StaffUserView(generics.CreateAPIView):
 	queryset = User.objects.all()
 	serializer_class = StaffUserSerializer
 	permission_classes = [permissions.AllowAny]
+
+def staff_register_page(request):
+	return render(request, 'staff_register.html')

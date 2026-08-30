@@ -103,7 +103,7 @@ function attachRowHandlers() {
   document.querySelectorAll('.delete-btn').forEach(btn => {
     btn.addEventListener('click', function (e) {
       e.stopPropagation()
-      fetch(`/make_reservation/staff/${this.dataset.id}/`, {
+      fetch(`/make_reservation/drf/${this.dataset.id}/`, {
         method: 'DELETE',
         headers: { 'X-CSRFToken': document.cookie.split('csrftoken=')[1]?.split(';')[0] }
       }).then(r => {

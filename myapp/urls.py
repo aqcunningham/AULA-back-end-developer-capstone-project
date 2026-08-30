@@ -1,7 +1,7 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from . import views
-from .views import reservation_page_view, reservation_api, ReservationViewSet, reservation_staff_view
+from .views import reservation_page_view, reservation_api, ReservationViewSet, reservation_staff_view, ReviewsView, about
 # MenuListCreateView, BookingListCreateView, Reviews, BookingAPIView, BookingViewSet,SingleMenuItemView, UserViewSet, StaffUserView, add_menu_view, menu_items_view
 from rest_framework.authtoken.views import obtain_auth_token
 from django.contrib.auth import views as auth_views
@@ -11,6 +11,8 @@ from django.contrib.auth import views as auth_views
 urlpatterns = [
 	path('', views.home, name='home'),
 	path('staff/', views.staff_dashboard, name='staff_dashboard'),
+	path('staff/register/drf/', views.StaffUserView.as_view(), name='staff_register_drf'),
+	path('staff/register/', views.staff_register_page, name='staff_register'),
 	path('staff/login/', auth_views.LoginView.as_view(template_name='staff_login.html'), name='staff_login'),
 	path('staff/logout/', auth_views.LogoutView.as_view(next_page='home'), name='staff_logout'),
 	path('make_reservation/', views.reservation_page_view, name='reservation_page'),
@@ -18,7 +20,8 @@ urlpatterns = [
 	path('api/make_reservation/', views.reservation_api, name='reservation_api'),
 	path('make_reservation/staff/', views.reservation_staff_view, name='reservation_staff'),
 	path('menu/', views.menu_items_view, name='menu'),
-	# path('reviews/', views.form_view, name='reviews'),
+	path('reviews/', views.ReviewsView, name='reviews'),
+	path('about/', views.about, name='about'),
 
 	# # editable menu items:
 	# path('add_menu_items/', views.add_menu_view, name='add_menu_view'),

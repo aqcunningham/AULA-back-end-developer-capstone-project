@@ -21,13 +21,13 @@
 	height: 3rem;
 }
 .ig:hover{
-	  color: #FFB09580;
+	  color: #ffb09580;
 }
 
-.staff-login {
+.login-style {
   /* padding-top: 1rem; */
   font-size: 1rem !important;
-  font-weight: 300;
+  font-weight: 300 !important;
   color: #f94e16 !important;
 }
 
