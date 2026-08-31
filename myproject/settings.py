@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,14 +21,17 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-v&$csvaoac@i0*)snwv-@0zjfow(7deju%q=70&$w_8mf88^qu'
-
-
+# SECRET_KEY = 'django-insecure-v&$csvaoac@i0*)snwv-@0zjfow(7deju%q=70&$w_8mf88^qu'
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-only-for-local-dev-fallback')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    '.railway.app',
+    'localhost',
+    '127.0.0.1',
+]
 
 
 # Application definition
@@ -87,11 +91,11 @@ WSGI_APPLICATION = 'myproject.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-		'NAME': 'aula_db',
-		'USER': 'auladmin',
-		'PASSWORD': 'aula123',
-		'HOST': '127.0.0.1',
-        'PORT': '3306',
+		'NAME': os.environ.get('MYSQLDATABASE', 'aula_db'),
+        'USER': os.environ.get('MYSQLUSER', 'auladmin'),
+        'PASSWORD': os.environ.get('MYSQLPASSWORD', 'aula123'),
+        'HOST': os.environ.get('MYSQLHOST', '127.0.0.1'),
+        'PORT': os.environ.get('MYSQLPORT', '3306'),
 		# 600 sec = 10min
 		'CONN_MAX_AGE': 600,
         # 'OPTIONS': {
