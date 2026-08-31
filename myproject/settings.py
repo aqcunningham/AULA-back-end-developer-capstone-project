@@ -55,6 +55,13 @@ DJOSER={
 		"token_create": "myapp.serializers.CustomTokenCreateSerializer",
     }}
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://aularestaurant.up.railway.app',
+    'https://*.railway.app',
+]
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
 	'whitenoise.middleware.WhiteNoiseMiddleware',

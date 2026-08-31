@@ -10,6 +10,7 @@ djangorestframework = "*"
 django = "*"
 djoser = "*"
 pillow = "*"
+railway = "*"
 
 [dev-packages]
 
